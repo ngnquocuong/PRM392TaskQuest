@@ -9,10 +9,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prm392_taskquest.data.local.entity.Priority
 import com.example.prm392_taskquest.data.local.entity.RecurringType
+import com.example.prm392_taskquest.ui.theme.PRM392TaskQuestTheme
 import com.example.prm392_taskquest.ui.viewmodel.TaskViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,7 +35,106 @@ fun AddEditTaskScreen(
     val recurringType by viewModel.recurringType.collectAsState()
 
     var showDatePicker by remember { mutableStateOf(false) }
-    var showTimePicker by remember { mutableStateOf(false) }
+
+    // Use the content function with ViewModel state
+    AddEditTaskScreenContent(
+        taskTitle = taskTitle,
+        taskDescription = taskDescription,
+        taskPriority = taskPriority,
+        taskDueDate = taskDueDate,
+        taskEstimatedMinutes = taskEstimatedMinutes,
+        taskXpReward = taskXpReward,
+        isRecurring = isRecurring,
+        recurringType = recurringType,
+        onTitleChange = { viewModel.updateTitle(it) },
+        onDescriptionChange = { viewModel.updateDescription(it) },
+        onPriorityChange = { viewModel.updatePriority(it) },
+        onDueDateClick = { showDatePicker = true },
+        onEstimatedMinutesChange = { viewModel.updateEstimatedMinutes(it) },
+        onXpRewardChange = { viewModel.updateXpReward(it) },
+        onRecurringChange = { viewModel.updateRecurring(it) },
+        onRecurringTypeChange = { viewModel.updateRecurringType(it) },
+        onSave = { viewModel.saveTask(onSuccess = onNavigateBack) },
+        onNavigateBack = onNavigateBack
+    )
+
+    // Date Picker Dialog
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            viewModel.updateDueDate(millis)
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AddEditTaskScreenPreview() {
+    PRM392TaskQuestTheme {
+        AddEditTaskScreenContent(
+            taskTitle = "Complete homework",
+            taskDescription = "Finish math assignment chapter 5",
+            taskPriority = Priority.HIGH,
+            taskDueDate = System.currentTimeMillis(),
+            taskEstimatedMinutes = 60,
+            taskXpReward = 25,
+            isRecurring = false,
+            recurringType = null,
+            onTitleChange = {},
+            onDescriptionChange = {},
+            onPriorityChange = {},
+            onDueDateClick = {},
+            onEstimatedMinutesChange = {},
+            onXpRewardChange = {},
+            onRecurringChange = {},
+            onRecurringTypeChange = {},
+            onSave = {},
+            onNavigateBack = {}
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AddEditTaskScreenContent(
+    taskTitle: String,
+    taskDescription: String,
+    taskPriority: Priority,
+    taskDueDate: Long?,
+    taskEstimatedMinutes: Int,
+    taskXpReward: Int,
+    isRecurring: Boolean,
+    recurringType: RecurringType?,
+    onTitleChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onPriorityChange: (Priority) -> Unit,
+    onDueDateClick: () -> Unit,
+    onEstimatedMinutesChange: (Int) -> Unit,
+    onXpRewardChange: (Int) -> Unit,
+    onRecurringChange: (Boolean) -> Unit,
+    onRecurringTypeChange: (RecurringType?) -> Unit,
+    onSave: () -> Unit,
+    onNavigateBack: () -> Unit
+) {
     val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault())
 
     Scaffold(
@@ -47,9 +148,7 @@ fun AddEditTaskScreen(
                 },
                 actions = {
                     TextButton(
-                        onClick = {
-                            viewModel.saveTask(onSuccess = onNavigateBack)
-                        },
+                        onClick = onSave,
                         enabled = taskTitle.isNotBlank()
                     ) {
                         Text("Save")
@@ -69,7 +168,7 @@ fun AddEditTaskScreen(
             // Title
             OutlinedTextField(
                 value = taskTitle,
-                onValueChange = { viewModel.updateTitle(it) },
+                onValueChange = onTitleChange,
                 label = { Text("Title *") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -78,7 +177,7 @@ fun AddEditTaskScreen(
             // Description
             OutlinedTextField(
                 value = taskDescription,
-                onValueChange = { viewModel.updateDescription(it) },
+                onValueChange = onDescriptionChange,
                 label = { Text("Description") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,7 +199,7 @@ fun AddEditTaskScreen(
                     Priority.values().forEach { priority ->
                         FilterChip(
                             selected = taskPriority == priority,
-                            onClick = { viewModel.updatePriority(priority) },
+                            onClick = { onPriorityChange(priority) },
                             label = { Text(priority.name) },
                             modifier = Modifier.weight(1f)
                         )
@@ -111,7 +210,7 @@ fun AddEditTaskScreen(
             // Due Date
             OutlinedCard(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { showDatePicker = true }
+                onClick = onDueDateClick
             ) {
                 Row(
                     modifier = Modifier
@@ -127,7 +226,7 @@ fun AddEditTaskScreen(
                         )
                         Text(
                             text = if (taskDueDate != null) {
-                                dateFormat.format(Date(taskDueDate!!))
+                                dateFormat.format(Date(taskDueDate))
                             } else {
                                 "Not set"
                             },
@@ -151,7 +250,7 @@ fun AddEditTaskScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 Slider(
                     value = taskEstimatedMinutes.toFloat(),
-                    onValueChange = { viewModel.updateEstimatedMinutes(it.toInt()) },
+                    onValueChange = { onEstimatedMinutesChange(it.toInt()) },
                     valueRange = 15f..240f,
                     steps = 14,
                     modifier = Modifier.fillMaxWidth()
@@ -177,7 +276,7 @@ fun AddEditTaskScreen(
             OutlinedTextField(
                 value = taskXpReward.toString(),
                 onValueChange = {
-                    it.toIntOrNull()?.let { xp -> viewModel.updateXpReward(xp) }
+                    it.toIntOrNull()?.let { xp -> onXpRewardChange(xp) }
                 },
                 label = { Text("XP Reward") },
                 modifier = Modifier.fillMaxWidth(),
@@ -199,7 +298,7 @@ fun AddEditTaskScreen(
                 )
                 Switch(
                     checked = isRecurring,
-                    onCheckedChange = { viewModel.updateRecurring(it) }
+                    onCheckedChange = onRecurringChange
                 )
             }
 
@@ -217,7 +316,7 @@ fun AddEditTaskScreen(
                         RecurringType.values().forEach { type ->
                             FilterChip(
                                 selected = recurringType == type,
-                                onClick = { viewModel.updateRecurringType(type) },
+                                onClick = { onRecurringTypeChange(type) },
                                 label = { Text(type.name) },
                                 modifier = Modifier.weight(1f)
                             )
@@ -227,33 +326,6 @@ fun AddEditTaskScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-        }
-
-        // Date Picker Dialog
-        if (showDatePicker) {
-            val datePickerState = rememberDatePickerState()
-            DatePickerDialog(
-                onDismissRequest = { showDatePicker = false },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            datePickerState.selectedDateMillis?.let { millis ->
-                                viewModel.updateDueDate(millis)
-                            }
-                            showDatePicker = false
-                        }
-                    ) {
-                        Text("OK")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDatePicker = false }) {
-                        Text("Cancel")
-                    }
-                }
-            ) {
-                DatePicker(state = datePickerState)
-            }
         }
     }
 }

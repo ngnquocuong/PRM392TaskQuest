@@ -16,8 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.prm392_taskquest.ui.theme.PRM392TaskQuestTheme
 import com.example.prm392_taskquest.ui.viewmodel.StatisticsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -366,5 +368,90 @@ private fun getProductivityLabel(score: Int): String {
         score >= 40 -> "Good"
         score >= 20 -> "Fair"
         else -> "Keep Going!"
+    }
+}
+
+// Preview Functions
+@Preview(showBackground = true)
+@Composable
+fun ProductivityGaugePreview() {
+    PRM392TaskQuestTheme {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                ProductivityGauge(score = 85)
+                Text("85%", style = MaterialTheme.typography.titleMedium)
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                ProductivityGauge(score = 55)
+                Text("55%", style = MaterialTheme.typography.titleMedium)
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                ProductivityGauge(score = 25)
+                Text("25%", style = MaterialTheme.typography.titleMedium)
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SimpleBarChartPreview() {
+    PRM392TaskQuestTheme {
+        Card(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                SimpleBarChart(
+                    data = listOf(5, 8, 3, 10, 6, 9, 7),
+                    labels = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StatCardPreview() {
+    PRM392TaskQuestTheme {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            StatCard(
+                title = "Today",
+                value = "5",
+                icon = Icons.Default.CheckCircle,
+                modifier = Modifier.weight(1f)
+            )
+            StatCard(
+                title = "This Week",
+                value = "23",
+                icon = Icons.Default.DateRange,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StatRowPreview() {
+    PRM392TaskQuestTheme {
+        Card(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                StatRow(label = "Total Tasks Completed", value = "42")
+                StatRow(label = "Current Level", value = "5")
+                StatRow(label = "Total XP Earned", value = "450")
+                StatRow(label = "Current Streak", value = "7 days")
+            }
+        }
     }
 }

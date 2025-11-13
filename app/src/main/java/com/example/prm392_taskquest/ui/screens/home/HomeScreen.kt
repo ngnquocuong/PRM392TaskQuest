@@ -12,9 +12,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prm392_taskquest.data.local.entity.Priority
+import com.example.prm392_taskquest.ui.theme.PRM392TaskQuestTheme
 import com.example.prm392_taskquest.ui.viewmodel.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -384,5 +386,74 @@ fun PriorityBadge(priority: Priority) {
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onPrimary
         )
+    }
+}
+
+// Preview Functions
+@Preview(showBackground = true)
+@Composable
+fun UserProfileCardPreview() {
+    PRM392TaskQuestTheme {
+        UserProfileCard(
+            level = 5,
+            xp = 450,
+            currentStreak = 7,
+            totalTasksCompleted = 42
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuestCardPreview() {
+    PRM392TaskQuestTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            QuestCard(
+                title = "Daily Challenge",
+                description = "Complete 3 tasks today",
+                xpReward = 50,
+                isCompleted = false
+            )
+            QuestCard(
+                title = "Speed Run",
+                description = "Complete 5 tasks within 2 hours",
+                xpReward = 100,
+                isCompleted = true
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TaskCardPreview() {
+    PRM392TaskQuestTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            TaskCard(
+                title = "Complete homework",
+                dueDate = System.currentTimeMillis(),
+                priority = Priority.HIGH,
+                onCheck = {}
+            )
+            TaskCard(
+                title = "Workout 30 min",
+                dueDate = System.currentTimeMillis() + 3600000,
+                priority = Priority.MEDIUM,
+                onCheck = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PriorityBadgePreview() {
+    PRM392TaskQuestTheme {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            PriorityBadge(Priority.LOW)
+            PriorityBadge(Priority.MEDIUM)
+            PriorityBadge(Priority.HIGH)
+            PriorityBadge(Priority.URGENT)
+        }
     }
 }

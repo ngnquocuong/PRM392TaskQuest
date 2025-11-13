@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prm392_taskquest.data.local.entity.CharacterClass
+import com.example.prm392_taskquest.ui.theme.PRM392TaskQuestTheme
 import com.example.prm392_taskquest.ui.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -310,4 +312,29 @@ fun CharacterClassDialog(
             }
         }
     )
+}
+
+// Preview Functions
+@Preview(showBackground = true)
+@Composable
+fun StatCardPreview() {
+    PRM392TaskQuestTheme {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            StatCard(
+                title = "Tasks Completed",
+                value = "42",
+                icon = Icons.Default.CheckCircle,
+                modifier = Modifier.weight(1f)
+            )
+            StatCard(
+                title = "Current Streak",
+                value = "7 days",
+                icon = Icons.Default.Home,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
 }

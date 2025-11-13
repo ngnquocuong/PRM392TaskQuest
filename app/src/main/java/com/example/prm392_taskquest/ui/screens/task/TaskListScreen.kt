@@ -10,11 +10,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prm392_taskquest.data.local.entity.Priority
 import com.example.prm392_taskquest.data.local.entity.Task
 import com.example.prm392_taskquest.ui.components.TaskFilterChips
+import com.example.prm392_taskquest.ui.theme.PRM392TaskQuestTheme
 import com.example.prm392_taskquest.ui.viewmodel.TaskListViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -284,5 +286,61 @@ fun PriorityChip(priority: Priority) {
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onPrimary
         )
+    }
+}
+
+// Preview Functions
+@Preview(showBackground = true)
+@Composable
+fun TaskListItemPreview() {
+    PRM392TaskQuestTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            TaskListItem(
+                task = Task(
+                    id = 1,
+                    title = "Complete homework",
+                    description = "Finish math assignment chapter 5",
+                    priority = Priority.HIGH,
+                    categoryId = 1,
+                    dueDate = System.currentTimeMillis(),
+                    xpReward = 25,
+                    isCompleted = false
+                ),
+                onToggleCompletion = {},
+                onEdit = {},
+                onDelete = {}
+            )
+            TaskListItem(
+                task = Task(
+                    id = 2,
+                    title = "Workout 30 minutes",
+                    description = "",
+                    priority = Priority.MEDIUM,
+                    categoryId = 2,
+                    dueDate = System.currentTimeMillis() + 3600000,
+                    xpReward = 15,
+                    isCompleted = true
+                ),
+                onToggleCompletion = {},
+                onEdit = {},
+                onDelete = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PriorityChipPreview() {
+    PRM392TaskQuestTheme {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            PriorityChip(Priority.LOW)
+            PriorityChip(Priority.MEDIUM)
+            PriorityChip(Priority.HIGH)
+            PriorityChip(Priority.URGENT)
+        }
     }
 }
