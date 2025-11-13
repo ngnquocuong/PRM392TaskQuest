@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(gradlew.bat assembleDebug:*)",
-      "Bash(./gradlew.bat assembleDebug:*)"
+      "Bash(./gradlew.bat assembleDebug:*)",
+      "Bash(.gradlew.bat assembleDebug)",
+      "Bash(dir \"C:\\FPT\\PRM\\PRM392TaskQuest\\app\\src\\main\" /b)"
     ],
     "deny": [],
     "ask": []
